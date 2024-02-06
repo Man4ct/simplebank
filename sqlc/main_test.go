@@ -14,7 +14,7 @@ const (
 	dbSource = "postgresql://root:password@localhost:5432/simple_bank?sslmode=disable"
 )
 
-var testQueries = *Queries
+var testQueries *Queries
 
 func TestMain(m *testing.M) {
 	db, err := sql.Open(dbDriver, dbSource)
