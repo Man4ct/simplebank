@@ -3,8 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"runtime"
 	"testing"
 	"time"
 
@@ -99,14 +97,4 @@ func TestListAccounts(t *testing.T) {
 	for _, account := range accounts {
 		require.NotEmpty(t, account)
 	}
-}
-
-func TestGoMaxProcx(t *testing.T) {
-	totalCpu := runtime.NumCPU()
-	fmt.Println("total cpu", totalCpu)
-	totalThread := runtime.GOMAXPROCS(-1)
-	fmt.Println("total thread", totalThread)
-
-	totalGoRoutine := runtime.NumGoroutine()
-	fmt.Println("total goroutine", totalGoRoutine)
 }
