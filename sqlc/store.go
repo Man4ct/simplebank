@@ -54,8 +54,6 @@ type TransferTxResult struct {
 	ToEntry     Entries   `json:"to_entry"`
 }
 
-var txKey = struct{}{}
-
 // TransferTx performs a money transfer from one account to the other.
 // It creates a transfer record, add account entries, and update account balances within a single database transaction.
 func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
@@ -90,28 +88,23 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		}
 
 		//TODO update account balance
-		account1, err := q.GetAccountForUpdate(ctx, arg.FromAccountID)
-		if err != nil {
-			return err
-		}
 
-		result.FromAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID:      account1.ID,
-			Balance: account1.Balance - arg.Amount,
+		//get and update account 1 balance
+
+		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			ID:     arg.FromAccountID,
+			Amount: -arg.Amount,
 		})
 		if err != nil {
 			return err
 		}
 
 		//move money to the account
-		account2, err := q.GetAccountForUpdate(ctx, arg.ToAccountID)
-		if err != nil {
-			return err
-		}
+		//get and update account 1 balance
 
-		result.ToAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID:      account2.ID,
-			Balance: account2.Balance + arg.Amount,
+		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			ID:     arg.ToAccountID,
+			Amount: arg.Amount,
 		})
 		if err != nil {
 			return err
